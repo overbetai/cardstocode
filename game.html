@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .poker-table {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            margin: 0 auto;
+            background: #8B4513;
+            padding: 20px;
+        }
+
+        .table-felt {
+            position: absolute;
+            inset: 20px;
+            border-radius: 200px;
+            background: #0A6F0A;
+            border: 4px solid #4A3210;
+        }
+
+        .community-cards {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .pot {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .player {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            text-align: center;
+        }
+
+        .player-cards {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 5px;
+            height: 70px;
+        }
+
+        .player-info {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .player-name {
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .player-chips {
+            font-size: 14px;
+            color: #FFD700;
+        }
+
+        .dealer-button {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #333;
+            color: #333;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .card-face-down {
+            background: linear-gradient(45deg, #1a1a1a 12.5%, #4a4a4a 12.5%, #4a4a4a 37.5%, #1a1a1a 37.5%, #1a1a1a 62.5%, #4a4a4a 62.5%, #4a4a4a 87.5%, #1a1a1a 87.5%);
+            background-size: 5px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="poker-table" class="poker-table">
+        <div class="table-felt"></div>
+    </div>
+
+    <script>
+        function createCardSVG(card = null, faceDown = false) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 100 140");
+            svg.setAttribute("width", "50");
+            svg.setAttribute("height", "70");
+            
+            // Card background
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("x", "0");
+            rect.setAttribute("y", "0");
+            rect.setAttribute("width", "100");
+            rect.setAttribute("height", "140");
+            rect.setAttribute("rx", "10");
+            rect.setAttribute("fill", "white");
+            rect.setAttribute("stroke", "#333");
+            rect.setAttribute("stroke-width", "2");
+            svg.appendChild(rect);
+
+            if (faceDown) {
+                // Create pattern for face down card
+                const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+                pattern.setAttribute("id", "cardBack");
+                pattern.setAttribute("patternUnits", "userSpaceOnUse");
+                pattern.setAttribute("width", "20");
+                pattern.setAttribute("height", "20");
+                pattern.setAttribute("patternTransform", "rotate(45)");
+
+                const patternRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                patternRect.setAttribute("width", "20");
+                patternRect.setAttribute("height", "20");
+                patternRect.setAttribute("fill", "#1a1a1a");
+
+                pattern.appendChild(patternRect);
+                svg.appendChild(pattern);
+
+                rect.setAttribute("fill", "url(#cardBack)");
+            } else if (card) {
+                // Add card value and suit if face up
+                const [value, suit] = card;
+                const color = (suit === '♥' || suit === '♦') ? '#ff0000' : '#000000';
+
+                // Top left
+                const topText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                topText.setAttribute("x", "10");
+                topText.setAttribute("y", "30");
+                topText.setAttribute("font-size", "20");
+                topText.setAttribute("fill", color);
+                topText.textContent = value;
+                svg.appendChild(topText);
+
+                const topSuit = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                topSuit.setAttribute("x", "10");
+                topSuit.setAttribute("y", "50");
+                topSuit.setAttribute("font-size", "20");
+                topSuit.setAttribute("fill", color);
+                topSuit.textContent = suit;
+                svg.appendChild(topSuit);
+
+                // Center suit
+                const centerSuit = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                centerSuit.setAttribute("x", "50");
+                centerSuit.setAttribute("y", "80");
+                centerSuit.setAttribute("font-size", "40");
+                centerSuit.setAttribute("text-anchor", "middle");
+                centerSuit.setAttribute("fill", color);
+                centerSuit.textContent = suit;
+                svg.appendChild(centerSuit);
+
+                // Bottom right (rotated)
+                const bottomText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                bottomText.setAttribute("x", "90");
+                bottomText.setAttribute("y", "110");
+                bottomText.setAttribute("font-size", "20");
+                bottomText.setAttribute("text-anchor", "end");
+                bottomText.setAttribute("fill", color);
+                bottomText.textContent = value;
+                svg.appendChild(bottomText);
+
+                const bottomSuit = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                bottomSuit.setAttribute("x", "90");
+                bottomSuit.setAttribute("y", "130");
+                bottomSuit.setAttribute("font-size", "20");
+                bottomSuit.setAttribute("text-anchor", "end");
+                bottomSuit.setAttribute("fill", color);
+                bottomSuit.textContent = suit;
+                svg.appendChild(bottomSuit);
+            }
+
+            return svg;
+        }
+
+        class PokerTable {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.players = [
+                    { id: 1, name: 'Claude', chips: 1000, cards: [null, null], isDealer: true },
+                    { id: 2, name: 'ChatGPT', chips: 1500, cards: [null, null] },
+                    { id: 3, name: 'Gemini', chips: 800, cards: [null, null] },
+                    { id: 4, name: 'Llama', chips: 2000, cards: [null, null] }
+                ];
+                this.communityCards = [null, null, null, null, null];
+                this.pot = 150;
+                this.init();
+            }
+
+            createCommunityCards() {
+                const communityCardsDiv = document.createElement('div');
+                communityCardsDiv.className = 'community-cards';
+                
+                this.communityCards.forEach(card => {
+                    communityCardsDiv.appendChild(createCardSVG(null, true));
+                });
+
+                this.container.appendChild(communityCardsDiv);
+            }
+
+            createPot() {
+                const potDiv = document.createElement('div');
+                potDiv.className = 'pot';
+                potDiv.textContent = `$${this.pot}`;
+                this.container.appendChild(potDiv);
+            }
+
+            createPlayers() {
+                this.players.forEach((player, index) => {
+                    const playerDiv = document.createElement('div');
+                    playerDiv.className = 'player';
+
+                    // Calculate position around the table
+                    const angle = (index * 360) / this.players.length;
+                    const radius = 42; // percentage of container size
+                    const x = 50 + radius * Math.cos((angle - 90) * (Math.PI / 180));
+                    const y = 50 + radius * Math.sin((angle - 90) * (Math.PI / 180));
+
+                    playerDiv.style.left = `${x}%`;
+                    playerDiv.style.top = `${y}%`;
+
+                    const cardsDiv = document.createElement('div');
+                    cardsDiv.className = 'player-cards';
+                    player.cards.forEach(() => {
+                        cardsDiv.appendChild(createCardSVG(null, true));
+                    });
+
+                    const infoDiv = document.createElement('div');
+                    infoDiv.className = 'player-info';
+                    infoDiv.innerHTML = `
+                        <div class="player-name">🤖 ${player.name}</div>
+                        <div class="player-chips">$${player.chips}</div>
+                    `;
+
+                    playerDiv.appendChild(cardsDiv);
+                    playerDiv.appendChild(infoDiv);
+
+                    if (player.isDealer) {
+                        const dealerButton = document.createElement('div');
+                        dealerButton.className = 'dealer-button';
+                        dealerButton.textContent = 'D';
+                        playerDiv.appendChild(dealerButton);
+                    }
+
+                    this.container.appendChild(playerDiv);
+                });
+            }
+
+            init() {
+                this.createCommunityCards();
+                this.createPot();
+                this.createPlayers();
+            }
+
+            // Example method to reveal a player's cards
+            revealPlayerCards(playerId, cards) {
+                const player = this.players.find(p => p.id === playerId);
+                if (player) {
+                    player.cards = cards;
+                    const playerDiv = this.container.querySelector(`.player:nth-child(${playerId + 3})`);
+                    const cardsDiv = playerDiv.querySelector('.player-cards');
+                    cardsDiv.innerHTML = '';
+                    cards.forEach(card => {
+                        cardsDiv.appendChild(createCardSVG(card));
+                    });
+                }
+            }
+
+            // Example method to reveal community cards
+            revealCommunityCards(cards) {
+                const cardDivs = this.container.querySelectorAll('.community-cards svg');
+                cards.forEach((card, index) => {
+                    if (card) {
+                        const newCard = createCardSVG(card);
+                        cardDivs[index].replaceWith(newCard);
+                    }
+                });
+            }
+        }
+
+        // Initialize the poker table
+        const pokerTable = new PokerTable('poker-table');
+
+        // Example usage:
+        // Show some cards after a delay
+        setTimeout(() => {
+            pokerTable.revealPlayerCards(1, [['A', '♠'], ['K', '♠']]);
+            pokerTable.revealCommunityCards([['J', '♥'], ['Q', '♦'], ['K', '♣'], null, null]);
+        }, 2000);
+    </script>
+</body>
+</html>

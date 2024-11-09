@@ -72,9 +72,9 @@ Suppose that Player 1 plays the strategy:
 
 $$
 \begin{cases}
-r = 0.5 \\
-p = 0.25 \\
-s = 0.25
+r_1 = 0.5 \\
+p_1 = 0.25 \\
+s_1 = 0.25
 \end{cases}
 $$
 
@@ -82,9 +82,9 @@ and Player 2 plays the strategy:
 
 $$
 \begin{cases}
-r = 0.1 \\
-p = 0.3 \\
-s = 0.6
+r_2 = 0.1 \\
+p_2 = 0.3 \\
+s_2 = 0.6
 \end{cases}
 $$
 
@@ -108,9 +108,9 @@ Now we can multiply the player action strategies together to get a percentage oc
 
 | Player 1/2 | Rock ($r_2=0.1$)   | Paper ($p_2=0.3$)  | Scissors ($s_2=0.6$) |
 |--------|---------|---------|----------|
-| **Rock ($r_1=0.5$)**   | Val: 0 <br>Pr: $0.5(0.1) = 0.05$ | Val: -1 <br>Pr: $0.5(0.3) = 0.15$ | Val: 1 <br>Pr: $0.5(0.6) = 0.3$ |
-| **Paper ($p_1=0.25$)** | Val: 1 <br>Pr: $0.25(0.1) = 0.025$ | Val: 0  <br>Pr: $0.25(0.3) = 0.075$ | Val: -1 <br>Pr: $0.25(0.6) = .15$ |
-| **Scissors ($s_1=0.25$)** | Val: -1 <br>Pr: $0.25(0.1) = 0.025$ | Val: 1 <br>Pr: $0.25(0.3) = 0.075$ | Val: 0 <br>Pr: $0.25(0.6) = .15$ |
+| **Rock ($r_1=0.5$)**   | Val: 0 <br>Pr: $0.5(0.1) = .05$ | Val: -1 <br>Pr: $0.5(0.3) = .15$ | Val: 1 <br>Pr: $0.5(0.6) = .3$ |
+| **Paper ($p_1=0.25$)** | Val: 1 <br>Pr: $0.25(0.1) = .025$ | Val: 0  <br>Pr: $0.25(0.3) = .075$ | Val: -1 <br>Pr: $0.25(0.6) = .15$ |
+| **Scissors ($s_1=0.25$)** | Val: -1 <br>Pr: $0.25(0.1) = .025$ | Val: 1 <br>Pr: $0.25(0.3) = .075$ | Val: 0 <br>Pr: $0.25(0.6) = .15$ |
 
 Note that the total probabilities sum to 1 and each row and column sums to the probability of playing that row or column. 
 
@@ -128,7 +128,7 @@ A Nash equilibrium means that no player can improve their expected payoff by uni
 
 In RPS, the Nash equilibrium strategy is to play each action $r = p = s = 1/3$ of the time. I.e., to play totally randomly. 
 
-Played a combination of strategies is called a mixed strategy, as opposed to a pure strategy, which would select only one action. Mixed strategies are useful in games of imperfect information because it's valuable to not be predictable and to conceal your private information. In perfect information games, the theoretically optimal play would not contain any mixing (i.e., if you could calculate all possible moves to the end of the game). 
+Playing a combination of strategies is called a mixed strategy, as opposed to a pure strategy, which would select only one action. Mixed strategies are useful in games of imperfect information because it's valuable to not be predictable and to conceal your private information. In perfect information games, the theoretically optimal play would not contain any mixing (i.e., if you could calculate all possible moves to the end of the game). 
 
 The equilibrium RPS strategy is worked out below: 
 
@@ -142,15 +142,15 @@ The equilibrium RPS strategy is worked out below:
 
 If Player 1 plays Rock with probability $r$, Paper with probability $p$, and Scissors with probability $s$, we have the following expected value equations for Player 2: 
 
-$\mathbb{E}[P_2(R)] = -1p + 1s$
+$\mathbb{E}[P_2(R)] = 0r -1p + 1s$
 
-$\mathbb{E}[P_2(P)] = 1r - 1s$
+$\mathbb{E}[P_2(P)] = 1r + 0p - 1s$
 
-$\mathbb{E}[P_2(S)] = -1r + 1p$
+$\mathbb{E}[P_2(S)] = -1r + 1p + 0s$
 
 (To compute each of these, sum the payoffs for each column with P2 payoffs and P1 probabilities. P2 payoffs because these are the expected values for P2 and P1 probabiltiies because the payoffs depend on the strategy probabilties of P1 against each of P2's actions.)
 
-Since no action dominates, we know that the EV of every strategic action should be equal  (since if a certain strategy was best, we'd want to always play that strategy). 
+Since no action dominates, we know that the EV of every strategic action should be equal (since if a certain strategy was best, we'd want to always play that strategy). 
 
 To solve for $r$, $p$, and $s$, we can start by setting these EVs equal: 
 
@@ -349,7 +349,7 @@ Since it's zero-sum, we have $\mathbb{E}[G] = -0.75$ for the Goalie.
 :::
 
 ### Probabilistic interpretations
-Note that, for example, the Kicker playing 50% Left and 50% Right could be interpreted as a single player having these probabilities or a field of players averaging to these probabilities. So out of 100 players, this could mean: 
+The Kicker playing 50% Left and 50% Right could be interpreted as a single player having these probabilities or a field of players averaging to these probabilities. So out of 100 players, this could mean: 
 
 - 100 players playing 50% Left and 50% Right
 - 50 players playing 100% Left and 50 players playing 100% Right
@@ -377,13 +377,13 @@ By setting the values equal, we get $2 - 2p = p \Rightarrow p = \frac{2}{3}$ as 
 
 This means that $1-p = 1 - \frac{2}{3} = \frac{1}{3}$. 
 
-Therefore the Goalie should play Lean Left ($p$) $\frac{2}{3}$ and Lean Right ($1-p$) $\frac{1}{3}$. 
+Therefore the Goalie should play Lean Left ($p$) with frequency $\frac{2}{3}$ and Lean Right ($1-p$) with frequency $\frac{1}{3}$. 
 
 The value for the Kicker is $\frac{2}{3}$, or $(0.67)$, for both actions, regardless of the Kicker's mixing strategy. 
 
-Note that the Kicker is worse off now ($0.67$ now compared to $0.75$) than when both players played 50% each action. Why?
+Note that the Kicker is worse off now ($0.67$ now compared to $0.75$) than when both players played 50% each action.
 
-If the Kicker plays Kick Left with probability $q$ and Kick Right with probability $1-q$, then the Goalie’s values are: 
+Now let's do the reverse. If the Kicker plays Kick Left with probability $q$ and Kick Right with probability $1-q$, then the Goalie’s values are: 
 
 $\mathbb{E}[G(L)] = 0(q) - 1(1-q) = -1 + q$
 
@@ -401,7 +401,7 @@ $$
 \end{equation}
 $$
 
-Therefore the Kicker should play Kick Left ($q$) $\frac{1}{3}$ and Kick Right ($1-q$) $\frac{2}{3}$, giving a value of $-\frac{2}{3}$ to the Goalie. 
+Therefore the Kicker should play Kick Left ($q$) with frequency $\frac{1}{3}$ and Kick Right ($1-q$) with frequency $\frac{2}{3}$, giving a value of $-\frac{2}{3}$ to the Goalie. 
 
 We can see this from the game table: 
 
@@ -430,7 +430,7 @@ When a player makes their opponent indifferent, this means that any action the o
 
 So if you know your opponent is playing the equilibrium strategy, then you can actually do whatever you want with no penalty with the mixing actions. Sort of. 
 
-The risk is that the opponent can now deviate from equilibrium and take advantage of your new strategy. For example, if the Goalie caught on and moved to always Lean Left, then the value is reduced to $0$ for both players. Though if the Kicker then caught on and moved to always Kick Right, then the value goes up to $1$ for the Kicker and $-1$ for the Goalie. Perhaps after a few cycles like this, the players would go back to equilibrium.
+The risk is that the opponent can now deviate from equilibrium and take advantage of your new strategy. For example, if the Goalie caught on and moved to always Lean Left, then the value is reduced to $0$ for both players. Though if the Kicker then caught on to that and moved to always Kick Right, then the value goes up to $1$ for the Kicker and $-1$ for the Goalie. Perhaps after a few cycles like this, the players would go back to equilibrium.
 
 To summarize, you can only be penalized for not playing the equilibrium mixing strategy if your opponent plays a non-equilibrium strategy that exploits your strategy. You can only profit more than the equilibrium strategy if your opponent either plays off equilibrium and you do as well or if you play equilibrium and they play some action that is not part of the equilibrium strategy (also known as the support, or the set of pure strategies that are played with non-zero probability under the mixed strategy, which is not possible in this game since both possible actions are played at equilibrium). 
 
@@ -460,7 +460,7 @@ Let's modify the code to update the deal:
 :::
 
 ### Equity and Variance
-**Equity** is defined as the percentage of the pot expected to win given the cards, assuming no additional betting. We see that in the original case where players were randomly dealt cards *and* in this case, both players have 50% equity before the cards are dealt. After the cards are dealt, the higher card has 100% equity. 
+**Equity** is defined as the percentage of the pot expected to win given the cards, assuming no additional betting. We see that in the original case where players were randomly dealt cards *and* in this case, both players have 50% equity before the cards are dealt. After the cards are dealt in these games, the higher card has 100% equity. 
 
 In real poker games like Texas Hold'em, equity is more interesting because there are additional community cards that mean that even if one hand starts off as stronger, it won't necessarily win. Below we have a special poker hand where the equities are shown as 53% and 47% and the hand currently losing actually has higher equity! 
 

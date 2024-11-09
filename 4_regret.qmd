@@ -1,3 +1,8 @@
 ---
 title: "C2C #4: Regret and Decision Making"
 ---
+
+Add regret logic to infosetes 
+Example in one node of game tree
+Regret minimization
+Relation to decision making

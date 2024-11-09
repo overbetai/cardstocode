@@ -24,3 +24,7 @@ We can see all possible payouts, where the rows are P1 actions and the columns a
 Note that Player 1 choosing right *could* result in a higher payout (6) if Player 2 also chose right, but a rational Player 2 would not do that, and so the algorithm requires maximizing one's minimum payoff, which means Player 1 must choose left (earning a guaranteed value of 1). 
 
 By working backwards from the end of a game, we can evaluate each possible sequence of moves and propagate the values up the game tree.
+
+Extensive form
+Go through tree 
+See how some parts of tree affect others
